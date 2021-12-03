@@ -32,9 +32,14 @@ const {
 // > sqrt(4);
 // < 16
 
-function exponencial(exp) {
+function exponencial (exp){
+    
+    return function(base){
 
-}
+    return Math.pow(base, exp);
+
+    }
+  }
 
 // ----- Recursión -----
 
@@ -69,11 +74,24 @@ function exponencial(exp) {
 // haciendo los movimientos SUR->ESTE->NORTE
 // Aclaraciones: el segundo parametro que recibe la funcion ('direccion') puede ser pasado vacio (null)
 
-function direcciones(laberinto) {
 
+function direcciones(laberinto, ruta) {
+    var ruta = ruta || '';
+
+    if(!laberinto) { 
+        return '';
+    } else {
+        for (var k in laberinto){
+            if(laberinto[k] === 'destino'){
+                ruta += k;
+            } else if (typeof laberinto[k] === 'object'){
+                ruta += k;
+                return direcciones(laberinto[k],ruta);
+            }
+        }
+    }
+    return ruta;
 }
-
-
 // EJERCICIO 3
 // Crea la funcion 'deepEqualArrays':
 // Dado que las comparaciones en javascript aveces son un problema como con el siguiente ejemplo:
@@ -88,7 +106,19 @@ function direcciones(laberinto) {
 // deepEqualArrays([0,1,[[0,1,2],1,2]], [0,1,[[0,1,2],1,2]]) => true
 
 function deepEqualArrays(arr1, arr2) {
-
+    if(arr1.length !== arr2.length){
+        return false;
+    } let i = 0;
+    while(i < arr2.length){
+        if (arr1[i] !== arr2[i]){
+            if(typeof arr1[i] != typeof arr2[i]){
+                return false;
+            }if(arr1[i].isArray && arr2[i].isArray){
+                return deepEqualArrays(arr1[i], arr2[i]);
+            }
+        } i++;
+    }
+    return true;
 }
 
 
@@ -106,6 +136,7 @@ function deepEqualArrays(arr1, arr2) {
 // Las dos clases principales ya van a estar implementadas a continuacion:
 function OrderedLinkedList() {
     this.head = null;
+    this.length = 0;
 }
 // notar que Node esta implementado en el archivo DS
 
@@ -120,7 +151,6 @@ OrderedLinkedList.prototype.print = function(){
     print += ' --> null'
     return print
 }
-
 
 // EJERCICIO 4
 // Crea el metodo 'add' que debe agregar nodos a la OLL de forma que la misma se conserve ordenada:
@@ -139,7 +169,21 @@ OrderedLinkedList.prototype.print = function(){
 // < 'head --> 5 --> 3 --> 1 --> null'
 //               4
 OrderedLinkedList.prototype.add = function(val){
-    
+
+    let node = new Node(val);
+    let current = this.head;
+
+    if(!current || current.value < val){
+        node.next = current;
+        this.head = node;
+    } else {    
+        while(current.next && current.next.value > val){
+            current = current.next;
+        }
+        node.next = current.next;
+        current.next = node;
+    }
+ 
 }
 
 
